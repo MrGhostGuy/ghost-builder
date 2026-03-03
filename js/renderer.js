@@ -1,11 +1,109 @@
-// Renderer - 240x282 R1 screen
 class Renderer {
-  constructor(canvas) { this.canvas=canvas; this.ctx=canvas.getContext("2d"); this.W=240; this.H=282; this.tileSize=12; this.camX=0; this.camY=0; }
-  clear() { this.ctx.fillStyle="#87CEEB"; this.ctx.fillRect(0,0,this.W,this.H); }
-  updateCam(px,py) { this.camX=px-this.W/this.tileSize/2; this.camY=py-this.H/this.tileSize/2; }
-  drawWorld(world) { let ts=this.tileSize,ctx=this.ctx; let sx=Math.floor(this.camX),sy=Math.floor(this.camY); let cols=Math.ceil(this.W/ts)+2,rows=Math.ceil(this.H/ts)+2; for(let dx=0;dx<cols;dx++){for(let dy=0;dy<rows;dy++){let wx=sx+dx,wy=sy+dy; let b=world.getBlock(wx,wy); if(b==="AIR")continue; let block=BLOCKS[b]; if(!block||!block.color)continue; let px=(wx-this.camX)*ts,py=(wy-this.camY)*ts; ctx.fillStyle=block.color; ctx.fillRect(px,py,ts-1,ts-1);}} }
-  drawPlayer(player) { let ts=this.tileSize,ctx=this.ctx; let px=(player.x-this.camX)*ts-ts*player.w/2,py=(player.y-player.h-this.camY)*ts; ctx.fillStyle="#4488ff"; ctx.fillRect(px,py,ts*player.w,ts*player.h); ctx.fillStyle="#ffcc88"; ctx.fillRect(px+2,py+1,ts*player.w-4,ts*0.4); }
-  drawCursor(player) { let ts=this.tileSize,ctx=this.ctx; let px=(player.cursorX-this.camX)*ts,py=(player.cursorY-this.camY)*ts; ctx.strokeStyle="#fff"; ctx.lineWidth=1; ctx.strokeRect(px,py,ts-1,ts-1); }
-  drawHUD(player,inv) { let ctx=this.ctx; ctx.fillStyle="rgba(0,0,0,0.5)"; ctx.fillRect(0,0,this.W,16); ctx.fillStyle="#f44"; ctx.font="10px monospace"; ctx.fillText("HP:"+player.hp+"/"+player.maxHp,4,12); let sel=inv.getSelected(); if(sel){let item=ITEMS[sel.id]; if(item)ctx.fillText(item.name+"x"+sel.count,90,12);} ctx.fillStyle="rgba(0,0,0,0.6)"; ctx.fillRect(0,this.H-24,this.W,24); let bw=24,pad=2,sx=(this.W-inv.slots.length*(bw+pad))/2; for(let i=0;i<inv.slots.length;i++){let x=sx+i*(bw+pad),y=this.H-23; ctx.fillStyle=i===inv.selected?"#ffcc00":"#555"; ctx.fillRect(x,y,bw,20); ctx.fillStyle="#333"; ctx.fillRect(x+1,y+1,bw-2,18); if(inv.slots[i]){let item=ITEMS[inv.slots[i].id]; if(item){ctx.fillStyle=item.color; ctx.font="12px monospace"; ctx.fillText(item.symbol,x+7,y+14); ctx.font="7px monospace"; ctx.fillStyle="#fff"; ctx.fillText(inv.slots[i].count,x+bw-10,y+18);}}} }
-  drawTitle() { let ctx=this.ctx; ctx.fillStyle="#1a0a2e"; ctx.fillRect(0,0,this.W,this.H); ctx.fillStyle="#8844ff"; ctx.font="bold 18px monospace"; ctx.fillText("GHOST",75,80); ctx.fillText("BUILDER",60,105); ctx.fillStyle="#aaa"; ctx.font="10px monospace"; ctx.fillText("Created by",70,150); ctx.fillText("Jeff Hollaway",55,165); ctx.fillText("[GhostLegacyX]",50,180); ctx.fillStyle="#888"; ctx.font="9px monospace"; ctx.fillText("Scroll=Start",75,240); }
+  constructor() {
+    this.canvas = document.getElementById("c");
+    this.ctx = this.canvas.getContext("2d");
+    this.W = 240; this.H = 282; this.tileSize = 12;
+    this.camX = 0; this.camY = 0;
+  }
+  clear(skyColor) { this.ctx.fillStyle = skyColor || "#87CEEB"; this.ctx.fillRect(0,0,this.W,this.H); }
+  updateCam(px, py) {
+    this.camX = px * this.tileSize - this.W/2;
+    this.camY = py * this.tileSize - this.H/2;
+  }
+  drawWorld(world) {
+    var t = this.tileSize, sx = Math.floor(this.camX/t), sy = Math.floor(this.camY/t);
+    var ex = sx + Math.ceil(this.W/t)+1, ey = sy + Math.ceil(this.H/t)+1;
+    for (var x = sx; x <= ex; x++) {
+      for (var y = sy; y <= ey; y++) {
+        var b = world.getBlock(x, y);
+        if (b !== "AIR") {
+          var bd = BLOCKS[b];
+          if (bd) { this.ctx.fillStyle = bd.color; this.ctx.fillRect(x*t-this.camX, y*t-this.camY, t, t); }
+        }
+      }
+    }
+  }
+  drawPlayer(player) {
+    var t = this.tileSize, px = player.x*t - this.camX, py = player.y*t - this.camY;
+    var blink = player.invTimer > 0 && Math.floor(player.invTimer/3) % 2 === 0;
+    if (blink) return;
+    this.ctx.fillStyle = "#4488ff";
+    this.ctx.fillRect(px - player.w*t/2, py - player.h*t, player.w*t, player.h*t);
+    this.ctx.fillStyle = "#ffcc88";
+    this.ctx.fillRect(px - 3, py - player.h*t, 6, 6);
+  }
+  drawCursor(player) {
+    var t = this.tileSize;
+    var cx = (Math.floor(player.x) + player.cursorX) * t - this.camX;
+    var cy = (Math.floor(player.y) + player.cursorY) * t - this.camY;
+    this.ctx.strokeStyle = "#fff"; this.ctx.lineWidth = 1;
+    this.ctx.strokeRect(cx, cy, t, t);
+  }
+  drawEnemies(enemies) {
+    var t = this.tileSize;
+    for (var i = 0; i < enemies.length; i++) {
+      var e = enemies[i];
+      var ex = e.x * t - this.camX, ey = e.y * t - this.camY;
+      var flash = e.flashTimer > 0 && Math.floor(e.flashTimer/2) % 2 === 0;
+      if (e.type === "skeleton") {
+        this.ctx.fillStyle = flash ? "#fff" : e.color;
+        this.ctx.fillRect(ex - e.w*t/2, ey - e.h*t, e.w*t, e.h*t);
+        this.ctx.fillStyle = "#444";
+        this.ctx.fillRect(ex - e.w*t/2+1, ey - e.h*t, e.w*t-2, 2);
+        this.ctx.fillStyle = e.eyeColor;
+        var faceX = e.dir > 0 ? ex + 1 : ex - 3;
+        this.ctx.fillRect(faceX, ey - e.h*t + 2, 2, 2);
+        this.ctx.fillRect(faceX - 3, ey - e.h*t + 2, 2, 2);
+      } else if (e.type === "creeper") {
+        var col = e.fusing && Math.floor(e.fuseTime/4) % 2 ? "#fff" : e.color;
+        this.ctx.fillStyle = flash ? "#fff" : col;
+        this.ctx.fillRect(ex - e.w*t/2, ey - e.h*t, e.w*t, e.h*t);
+        this.ctx.fillStyle = e.eyeColor;
+        this.ctx.fillRect(ex - 2, ey - e.h*t + 3, 2, 3);
+        this.ctx.fillRect(ex + 1, ey - e.h*t + 3, 2, 3);
+        this.ctx.fillRect(ex - 1, ey - e.h*t + 7, 3, 2);
+      }
+    }
+  }
+  drawNightOverlay(alpha) {
+    if (alpha > 0.01) {
+      this.ctx.fillStyle = "rgba(0,0,20," + alpha.toFixed(2) + ")";
+      this.ctx.fillRect(0, 0, this.W, this.H);
+    }
+  }
+  drawHUD(player, inv, dayNight) {
+    this.ctx.fillStyle = "#c00"; this.ctx.font = "10px monospace";
+    this.ctx.fillText("HP:" + player.hp + "/" + player.maxHp, 2, 10);
+    if (dayNight) {
+      this.ctx.fillStyle = "#ff0"; this.ctx.fillText(dayNight.getTimeString() + " " + dayNight.phase, 80, 10);
+    }
+    if (inv && inv.slots) {
+      var y = this.H - 16;
+      for (var i = 0; i < Math.min(inv.slots.length, 8); i++) {
+        var s = inv.slots[i], bx = i * 30 + 2;
+        this.ctx.fillStyle = i === inv.selected ? "#fa0" : "#555";
+        this.ctx.fillRect(bx, y, 28, 14);
+        if (s.type) {
+          var bd = BLOCKS[s.type] || ITEMS[s.type];
+          if (bd) {
+            this.ctx.fillStyle = bd.color || "#fff";
+            this.ctx.fillRect(bx+1, y+1, 12, 12);
+          }
+          this.ctx.fillStyle = "#fff"; this.ctx.font = "8px monospace";
+          this.ctx.fillText(s.count, bx+14, y+11);
+        }
+      }
+    }
+  }
+  drawTitle() {
+    this.ctx.fillStyle = "#000"; this.ctx.fillRect(0,0,this.W,this.H);
+    this.ctx.fillStyle = "#4488ff"; this.ctx.font = "bold 20px monospace";
+    this.ctx.fillText("Ghost", 70, 100); this.ctx.fillText("Builder", 55, 125);
+    this.ctx.fillStyle = "#aaa"; this.ctx.font = "10px monospace";
+    this.ctx.fillText("Created by", 75, 170);
+    this.ctx.fillText("Jeff Hollaway", 60, 185);
+    this.ctx.fillText("[GhostLegacyX]", 55, 200);
+    this.ctx.fillStyle = "#fff"; this.ctx.font = "10px monospace";
+    this.ctx.fillText("Press to Start", 65, 250);
+  }
 }
