@@ -83,7 +83,7 @@ class Renderer {
         var s = inv.slots[i], bx = i * 30 + 2;
         this.ctx.fillStyle = i === inv.selected ? "#fa0" : "#555";
         this.ctx.fillRect(bx, y, 28, 14);
-        if (s.type) {
+        if (s && s.type) {
           var bd = BLOCKS[s.type] || ITEMS[s.type];
           if (bd) {
             this.ctx.fillStyle = bd.color || "#fff";

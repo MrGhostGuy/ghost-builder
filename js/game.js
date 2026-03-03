@@ -6,7 +6,7 @@ class Game {
     var sy = this.world.getSurface(sx) - 2;
     this.player = new Player(sx, sy);
     this.inventory = new Inventory();
-    this.inventory.add("WOOD", 5); this.inventory.add("DIRT", 10);
+    this.inventory.addItem("WOOD", 5); this.inventory.addItem("DIRT", 10);
     this.crafting = new CraftingSystem();
     this.renderer = new Renderer();
     this.enemyMgr = new EnemyManager();
@@ -69,12 +69,12 @@ class Game {
       var by = Math.floor(this.player.y) + this.player.cursorY;
       var b = this.world.getBlock(bx, by);
       if (b !== "AIR") {
-        this.inventory.add(b, 1); this.world.breakBlock(bx, by);
+        this.inventory.addItem(b, 1); this.world.breakBlock(bx, by);
       } else {
         var sel = this.inventory.getSelected();
         if (sel && sel.type && BLOCKS[sel.type]) {
           this.world.setBlock(bx, by, sel.type);
-          this.inventory.remove(sel.type, 1);
+          this.inventory.removeItem(sel.type, 1);
         }
       }
     }
