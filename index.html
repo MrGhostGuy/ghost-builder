@@ -1,106 +1,23 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-      <meta charset="UTF-8">
-      <meta name="viewport" content="width=240, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-      <title>Ghost Builder</title>
-    <link rel="stylesheet" href="css/styles.css">
-  </head>
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=240">
+  <title>Ghost Builder</title>
+  <link rel="stylesheet" href="css/styles.css">
+</head>
 <body>
-    <div id="app">
-          <!-- Title Screen -->
-          <div id="title-screen" class="screen active">
-                  <div class="title-bg">
-                            <canvas id="title-canvas" width="240" height="282"></canvas>canvas>
-                  </div>div>
-                  <div class="title-overlay">
-                            <div class="game-title">GHOST<br>BUILDER</div>div>
-                            <div class="title-subtitle">A 2D Side-Scroller</div>div>
-                            <div class="title-prompt blink">Scroll to Start</div>div>
-                            <div class="title-credit">Created by Jeff Hollaway<br>[GhostLegacyX]</div>div>
-                  </div>div>
-          </div>div>
-
-          <!-- Game Screen -->
-          <div id="game-screen" class="screen">
-                  <canvas id="game-canvas" width="240" height="282"></canvas>canvas>
-                  <!-- HUD Overlay -->
-                  <div id="hud">
-                            <div id="hud-top">
-                                        <div id="health-bar">
-                                                      <div id="health-fill"></div>div>
-                                        </div>div>
-                                        <div id="day-indicator">Day 1</div>div>
-                            </div>div>
-                            <div id="hud-bottom">
-                                        <div id="hotbar"></div>div>
-                                        <div id="selected-item">Dirt</div>div>
-                            </div>div>
-                  </div>div>
-          </div>div>
-
-          <!-- Inventory Screen -->
-          <div id="inventory-screen" class="screen">
-                  <div class="inv-header">INVENTORY</div>div>
-                  <div id="inv-grid"></div>div>
-                  <div id="inv-cursor" class="inv-highlight"></div>div>
-                  <div id="inv-info">
-                            <span id="inv-item-name">Empty</span>span>
-                            <span id="inv-item-count"></span>span>
-                  </div>div>
-                  <div class="inv-hint">Scroll: Navigate | Click: Select | Back: Close</div>div>
-          </div>div>
-
-          <!-- Crafting Screen -->
-          <div id="crafting-screen" class="screen">
-                  <div class="craft-header">CRAFTING</div>div>
-                  <div id="craft-list"></div>div>
-                  <div id="craft-info">
-                            <div id="craft-recipe-name">Select a recipe</div>div>
-                            <div id="craft-materials"></div>div>
-                            <div id="craft-result"></div>div>
-                  </div>div>
-                  <div class="craft-hint">Scroll: Browse | Click: Craft | Back: Close</div>div>
-          </div>div>
-
-          <!-- Pause Screen -->
-          <div id="pause-screen" class="screen">
-                  <div class="pause-menu">
-                            <div class="pause-title">PAUSED</div>div>
-                            <div class="pause-option selected" data-action="resume">Resume</div>div>
-                            <div class="pause-option" data-action="inventory">Inventory</div>div>
-                            <div class="pause-option" data-action="crafting">Crafting</div>div>
-                            <div class="pause-option" data-action="help">Controls</div>div>
-                            <div class="pause-option" data-action="title">Quit to Title</div>div>
-                  </div>div>
-          </div>div>
-
-          <!-- Help Screen -->
-          <div id="help-screen" class="screen">
-                  <div class="help-content">
-                            <div class="help-title">CONTROLS</div>div>
-                            <div class="help-item">Scroll Up/Down: Move / Navigate</div>div>
-                            <div class="help-item">Side Button: Action / Place Block</div>div>
-                            <div class="help-item">Long Press: Break Block</div>div>
-                            <div class="help-item">Double Click: Jump</div>div>
-                            <div class="help-item">Tilt Left/Right: Move Left/Right</div>div>
-                            <div class="help-item">Tilt Forward: Open Inventory</div>div>
-                            <div class="help-item">Tilt Back: Open Crafting</div>div>
-                            <div class="help-hint">Scroll to go back</div>div>
-                  </div>div>
-          </div>div>
-    </div>div>
-
-    <script src="js/hardware.js"></script>
-    <script src="js/data.js"></script>
-    <script src="js/world.js"></script>
-    <script src="js/player.js"></script>
-    <script src="js/inventory.js"></script>
-    <script src="js/crafting.js"></script>
-    <script src="js/renderer.js"></script>
-    <script src="js/game.js"></script>
-    <script src="js/app.js"></script>
+  <div id="app">
+    <canvas id="gameCanvas" width="240" height="282"></canvas>
+  </div>
+  <script src="js/hardware.js"></script>
+  <script src="js/data.js"></script>
+  <script src="js/inventory.js"></script>
+  <script src="js/crafting.js"></script>
+  <script src="js/world.js"></script>
+  <script src="js/player.js"></script>
+  <script src="js/renderer.js"></script>
+  <script src="js/game.js"></script>
+  <script src="js/app.js"></script>
 </body>
-</html>html>
-</body></title>
-  </head>
+</html>
